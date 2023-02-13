@@ -1,0 +1,20 @@
+{% extends 'bootstrap/base.html' %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block content %}
+
+<div class="container">
+  <div class="row">
+    <div class="">
+		
+      <!-- <p class="lead">This is the index page for an example Flask app using Bootstrap and WTForms. Note that only 100 actors are in the data source. Partial names are not valid.</p> -->
+
+      {{ wtf.quick_form(form) }}
+
+
+    </div>
+  </div>
+</div>
+
+
+{% endblock %}
