@@ -1,5 +1,6 @@
 {% extends 'bootstrap/base.html' %}
 {% import "bootstrap/wtf.html" as wtf %}
+
 {% include 'layout.html' %}
 
 
@@ -7,29 +8,60 @@
 
 <div class="container">
 	<div class="row">
-		<div class="">
 		
 			<!-- Button and textform -->
-			{% for product in products %}
-				<button type="button" onclick="window.location.href='/add_to_cart/{{ product[0] }}';" class="btn btn-primary btn-lg">{{ product[1] }}</button>
-			{% endfor%}
-
-			{{ wtf.quick_form(form) }}
 			
-			<div class="cart">
-				{% for item in current_items %}
-					<a href="/item/{{item[0]}}" class="item-link">
-						<div class="row item">
-							{{ item[2] }}
-						</div>
-					</a>
-				{% endfor %}
+
+			<div class="cart col">
+				<div class="table-responsive">
+				<table class="table table-sm borderless caption-top">
+				<caption>Nuvarande beställning:</caption>
+					<thead>
+						<tr>
+							<th scope="col">Vara</th>
+							<th scope="col">Pris</th>
+							<th scope="col">Specialkost</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for item in current_items %}
+						<tr onclick="window.location='/item/{{item[0]}}';">
+							<td>{{ item[2] }}</td>
+							<td>{{ item[3] }}</td>
+							
+							{% if item[5] != None %}
+							<td>{{ item[5] }}</td>
+							{% else %}
+							<td></td>
+							{% endif %}						
+						</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+				</div>
+				<hr style="width: 50%;">
+				<h3>Total summa: {{ item_sum }}</h3>
 			</div>
 
 
+			<div class="col-sm-6 products">
+			{% for product in products %}
+				<button type="button" onclick="window.location.href='/add_to_cart/{{ product[0] }}';" class="btn btn-light btn-lg item-button">{{ product[1] }} <br><sub>{{ product[3] }}</sub></button>
+			{% endfor%}
+			</div>
 
-		</div>
 	</div>
+			<div class="">
+			<button type="button" class="btn-lg btn-danger trash-button" onclick="window.location.href='/remove_order';">
+				<span class="glyphicon glyphicon-trash"></span>  Töm kundvagn
+			</button>
+			</div>
+
+
+			<div class="form">
+			{{ wtf.quick_form(form) }}
+			</div>
+	<div style="margin-bottom: 100px;"></div>
 </div>
 
 

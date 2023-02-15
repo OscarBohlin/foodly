@@ -9,6 +9,15 @@ app = Flask(__name__)
 app.config["SECRET_KEY"] = str(os.urandom(20).hex())
 Bootstrap(app)
 
+
+def sum_current_items(items: list[tuple]) -> int:
+	sum = 0
+	for item in items:
+		cost = item[3]
+		sum += cost
+
+	return sum
+
 def get_current_items(order_id: int) -> list[tuple]:
 	current_items = []
 
@@ -17,6 +26,18 @@ def get_current_items(order_id: int) -> list[tuple]:
 	
 	return current_items
 
+@app.route("/remove_order")
+def remove_order():
+	order_id = request.cookies.get("order_id")
+	href = redirect(url_for("bar"))  
+	resp = make_response(href)
+	
+	if order_id is not None:
+		db_manager.remove_order(order_id)
+		resp.delete_cookie("order_id")
+	
+	return resp
+	
 
 @app.route("/add_to_cart/<int:product_id>", methods=["GET"])
 def add_to_cart(product_id: int):
@@ -41,8 +62,11 @@ def bar():
 	products = db_manager.get_all_products()
 	order_id = request.cookies.get('order_id')
 	current_items = get_current_items(order_id)
+	item_sum = sum_current_items(current_items)
 
-	template = render_template('bar.html', form = form, products = products, current_items = current_items)
+	template = render_template('bar.html', 	form = form, products = products, 
+											current_items = current_items,
+											item_sum = item_sum)
 	resp = make_response(template)
 
 	if order_id is None:

@@ -13,22 +13,33 @@ def create_tables():
 						handled_by TEXT DEFAULT NULL, 
 						status INTEGER DEFAULT 0)  """)
 
-	connection.execute("""CREATE TABLE IF NOT EXISTS products(
+	connection.execute("""CREATE TABLE IF NOT EXISTS products (
 						product_id INTEGER PRIMARY KEY,
 						name TEXT UNIQUE NOT NULL,
 						cost REAL NOT NULL,
 						category TEXT)  """)
 
-	connection.execute("""CREATE TABLE IF NOT EXISTS items(
+	connection.execute("""CREATE TABLE IF NOT EXISTS items (
 						item_id INTEGER PRIMARY KEY,
 						product_id INTEGER NOT NULL,
 						order_id INTEGER NOT NULL,
 						diet TEXT,
 						FOREIGN KEY(product_id) REFERENCES products(product_id),
 						FOREIGN KEY(order_id) REFERENCES orders(order_id))  """)
+
+	connection.execute("""CREATE TRIGGER IF NOT EXISTS auto_delete_items
+							BEFORE DELETE ON orders
+						BEGIN
+							DELETE FROM items WHERE order_id = OLD.order_id;  
+						END""")
 	connection.close()
 
+def remove_order(order_id: int):
+	connection = get_connection()
 
+	connection.execute("DELETE FROM orders WHERE order_id = ?", (order_id,))
+	connection.commit()
+	connection.close()
 
 def get_connection():
 	return sqlite3.connect(DATABASE_NAME)
@@ -36,7 +47,7 @@ def get_connection():
 
 def get_all_products():
 	connection = get_connection()
-	products = connection.execute("SELECT * FROM products").fetchall()
+	products = connection.execute("SELECT * FROM products ORDER BY category DESC").fetchall()
 	connection.close()
 	return products
 
@@ -82,7 +93,7 @@ def create_order() -> int:
 def get_items_from_order(order_id: int) -> list[tuple]:
 	connection = get_connection()
 	items = connection.execute(	
-		"""SELECT i.item_id, p.product_id, p.name, p.cost, p.category 
+		"""SELECT i.item_id, p.product_id, p.name, p.cost, p.category, i.diet 
 			FROM items AS i 
 			INNER JOIN products AS p ON i.product_id = p.product_id
 			WHERE i.order_id = ?""", (order_id,)).fetchall()

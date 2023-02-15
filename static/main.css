@@ -7,8 +7,10 @@ body {
   h1, h2, h3, h4, h5, h6 {
     color: #444444;
   }
+
+
   
-  .bg-steel {
+  /* .bg-steel {
     background-color: #5f788a;
   }
   
@@ -77,15 +79,15 @@ body {
   
   .account-heading {
     font-size: 2.5rem;
-  }
+  } */
 
 
 /* FIX LAYOUT */
   .cart {
-    padding-top: 50px;
+    /* padding-top: 50px;
     padding-right: 30px;
     padding-bottom: 50px;
-    padding-left: 8px;
+    padding-left: 8px; */
   }
 
   .item {
@@ -99,12 +101,57 @@ body {
 	width: fit-content;
   }
 
-  .item:hover {
-	outline-width: 5px;
-	outline-color: #73b3eb;
-  }
 
-  .item-link {
-	color:#333333;
-	text-decoration: none;
-  }
+	tr {
+		outline-color: black;
+	}
+
+	tr:hover, .item-button:hover {
+		background-color: rgb(222, 248, 255); }
+
+
+	caption {
+		font-size: x-large;
+	}
+
+	td, th, a {
+		font-size: large;
+	}
+	.table-responsive {
+		width: 100%;
+	}
+
+	.item-button {
+		margin: 5px;
+		/* min-width: fit-content; */
+		width: 200px;
+		height: 75px;
+		background-color: rgb(222, 248, 255);
+		color: black;
+	}
+
+	/* .item-button:hover {
+		outline-width: 5px;
+		outline-color: rgb(222, 248, 255);
+	} */
+
+    table.borderless td,table.borderless th{
+     border: none !important;
+	}
+
+	.products { margin-bottom: 5%;	}
+
+	.form, .trash-button{ 
+		width: 200px; 
+		margin-bottom:5%;
+	}
+	
+	@media (max-width : 400px) {
+		.container {
+			width: 95%;
+		}
+		.item-button {
+			width: 100%;
+		}
+
+	}
