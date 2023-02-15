@@ -9,9 +9,9 @@ def create_tables():
 	connection = get_connection()
 	connection.execute("""CREATE TABLE IF NOT EXISTS orders (
 						order_id INTEGER PRIMARY KEY AUTOINCREMENT,
-						time_created TIMESTAMP,
-						handled_by TEXT NOT NULL, 
-						status INTEGER NOT NULL)  """)
+						time_created TIMESTAMP DEFAULT NULL,
+						handled_by TEXT DEFAULT NULL, 
+						status INTEGER DEFAULT 0)  """)
 
 	connection.execute("""CREATE TABLE IF NOT EXISTS products(
 						product_id INTEGER PRIMARY KEY,
@@ -64,3 +64,34 @@ def drop_all_tables():
 	connection.execute("DROP TABLE IF EXISTS items")
 	connection.commit()
 	connection.close()
+
+
+def create_order() -> int:
+	connection = get_connection()
+	cursor = connection.cursor()
+
+	cursor.execute("INSERT INTO orders(time_created, handled_by, status) VALUES (NULL, NULL, 0)")
+	order_id = cursor.lastrowid
+	
+	cursor.close()
+	connection.commit()
+	connection.close()
+
+	return order_id
+
+def get_items_from_order(order_id: int) -> list[tuple]:
+	connection = get_connection()
+	items = connection.execute(	
+		"""SELECT i.item_id, p.product_id, p.name, p.cost, p.category 
+			FROM items AS i 
+			INNER JOIN products AS p ON i.product_id = p.product_id
+			WHERE i.order_id = ?""", (order_id,)).fetchall()
+	connection.close()
+	return items
+
+def create_item(product_id: int, order_id: int):
+	connection = get_connection()
+	connection.execute("INSERT INTO items(product_id, order_id) VALUES(?,?)", (product_id, order_id))
+	connection.commit()
+	connection.close()
+	

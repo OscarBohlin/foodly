@@ -78,3 +78,33 @@ body {
   .account-heading {
     font-size: 2.5rem;
   }
+
+
+/* FIX LAYOUT */
+  .cart {
+    padding-top: 50px;
+    padding-right: 30px;
+    padding-bottom: 50px;
+    padding-left: 8px;
+  }
+
+  .item {
+	outline: solid;
+	border-radius: 3px;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	padding-left: 5px;
+	margin-bottom: 10px;
+	min-width: 250px;
+	width: fit-content;
+  }
+
+  .item:hover {
+	outline-width: 5px;
+	outline-color: #73b3eb;
+  }
+
+  .item-link {
+	color:#333333;
+	text-decoration: none;
+  }

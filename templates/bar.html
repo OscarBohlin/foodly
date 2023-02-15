@@ -1,19 +1,35 @@
 {% extends 'bootstrap/base.html' %}
 {% import "bootstrap/wtf.html" as wtf %}
+{% include 'layout.html' %}
+
 
 {% block content %}
 
 <div class="container">
-  <div class="row">
-    <div class="">
+	<div class="row">
+		<div class="">
 		
-      <!-- <p class="lead">This is the index page for an example Flask app using Bootstrap and WTForms. Note that only 100 actors are in the data source. Partial names are not valid.</p> -->
+			<!-- Button and textform -->
+			{% for product in products %}
+				<button type="button" onclick="window.location.href='/add_to_cart/{{ product[0] }}';" class="btn btn-primary btn-lg">{{ product[1] }}</button>
+			{% endfor%}
 
-      {{ wtf.quick_form(form) }}
+			{{ wtf.quick_form(form) }}
+			
+			<div class="cart">
+				{% for item in current_items %}
+					<a href="/item/{{item[0]}}" class="item-link">
+						<div class="row item">
+							{{ item[2] }}
+						</div>
+					</a>
+				{% endfor %}
+			</div>
 
 
-    </div>
-  </div>
+
+		</div>
+	</div>
 </div>
 
 
