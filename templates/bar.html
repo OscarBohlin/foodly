@@ -25,12 +25,12 @@
 					</thead>
 					<tbody>
 						{% for item in current_items %}
-						<tr onclick="window.location='/item/{{item[0]}}';">
-							<td>{{ item[2] }}</td>
-							<td>{{ item[3] }}</td>
+						<tr onclick="window.location='/item/{{ item.item_id }}';">
+							<td>{{ item.product.name }}</td>
+							<td>{{ item.product.cost }}</td>
 							
-							{% if item[5] != None %}
-							<td>{{ item[5] }}</td>
+							{% if item.diet != None %}
+							<td>{{ item.diet }}</td>
 							{% else %}
 							<td></td>
 							{% endif %}						
@@ -46,7 +46,7 @@
 
 			<div class="col-sm-6 products">
 			{% for product in products %}
-				<button type="button" onclick="window.location.href='/add_to_cart/{{ product[0] }}';" class="btn btn-light btn-lg item-button">{{ product[1] }} <br><sub>{{ product[3] }}</sub></button>
+				<button type="button" onclick="window.location.href='/add_to_cart/{{ product.product_id }}';" class="btn btn-light btn-lg item-button">{{ product.name }} <br><sub>{{ product.category }}</sub></button>
 			{% endfor%}
 			</div>
 

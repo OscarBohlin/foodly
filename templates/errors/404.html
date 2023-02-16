@@ -1,0 +1,12 @@
+{% extends 'bootstrap/base.html' %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% include 'layout.html' %}
+
+{% block content %}
+
+<!-- ADD JINJA FOR ERROR MESSAGE AND ERROR CODE -->
+
+<h1>Error {{ error_code }}: {{ error_message }}</h1>
+
+{% endblock %}

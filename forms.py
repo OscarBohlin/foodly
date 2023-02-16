@@ -7,3 +7,8 @@ class BarOrderForm(FlaskForm):
 
 	handled_by = StringField("Namn", validators=[InputRequired()])
 	submit = SubmitField("Lägg beställning")
+
+
+class ItemDietForm(FlaskForm):
+	diet = StringField("Specialkost", validators=[InputRequired()])
+	submit = SubmitField("Spara")
