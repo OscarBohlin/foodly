@@ -5,5 +5,24 @@
 
 
 {% block content %}
+<div class="container">
+
+
+	<div class="product-item">
+		<b>Rätt: {{ item.product.name }}</b><br>
+		Pris: {{ item.product.cost }}:-<br>
+		Specialkost: {{ item.diet }}
+	</div>
+	
+	<button type="button" class="btn-lg btn-warning trash-button" onclick="window.history.go(-1);">
+				<span class="glyphicon glyphicon-remove"></span>  Avbryt
+		</button>
+
+	{{ wtf.quick_form(form) }}
+
+</div>
+
+
+
 
 {% endblock %}

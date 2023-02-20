@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
-from wtforms.validators import InputRequired 
+from wtforms.validators import InputRequired, Optional
 
 
 class BarOrderForm(FlaskForm):
@@ -10,5 +10,5 @@ class BarOrderForm(FlaskForm):
 
 
 class ItemDietForm(FlaskForm):
-	diet = StringField("Specialkost", validators=[InputRequired()])
+	diet = StringField("Specialkost", validators=[Optional()])
 	submit = SubmitField("Spara")

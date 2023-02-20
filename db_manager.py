@@ -3,6 +3,10 @@ from datetime import datetime
 
 DATABASE_NAME = "foodly.sqlite"
 
+ORDER_STATUS_PENDING = 0
+ORDER_STATUS_PLACED = 1
+ORDER_STATUS_COOKING = 2
+ORDER_STATUS_DONE = 3
 
 class Order():
 
@@ -35,7 +39,7 @@ def create_tables():
 	connection = get_connection()
 	connection.execute("""CREATE TABLE IF NOT EXISTS orders (
 						order_id INTEGER PRIMARY KEY AUTOINCREMENT,
-						time_created TIMESTAMP DEFAULT (datetime('now', 'localtime')),
+						last_modified TIMESTAMP DEFAULT (datetime('now', 'localtime')),
 						handled_by TEXT DEFAULT NULL, 
 						status INTEGER DEFAULT 0)  """)
 
@@ -62,16 +66,15 @@ def create_tables():
 	connection.execute("""CREATE TRIGGER IF NOT EXISTS auto_delete_orders
 								BEFORE INSERT ON orders
 							BEGIN 
-								DELETE FROM orders WHERE time_created < DATETIME('NOW', 'localtime', '-1 hour');
-							END
-						""")
+								DELETE FROM orders WHERE last_modified < DATETIME('NOW', 'localtime', '-1 hour')
+								AND status = 0;
+							END""")
 	
 	connection.execute("""CREATE TRIGGER IF NOT EXISTS auto_refresh_order_timestamp
 								AFTER INSERT ON items
 							BEGIN
-								UPDATE orders SET time_created = DATETIME('NOW', 'localtime') WHERE order_id = NEW.order_id;
-							END
-						""")
+								UPDATE orders SET last_modified = DATETIME('NOW', 'localtime') WHERE order_id = NEW.order_id;
+							END""")
 	connection.close()
 
 def remove_order(order_id: int):
@@ -203,6 +206,20 @@ def get_item(item_id: int, order_id: int) -> Item:
 def set_diet(item_id: int, diet: str):
 	connection = get_connection()
 
-	connection.execute("""	UPDATE items SET diet = ? WHERE item_id = ?""", (diet, item_id))
-
+	connection.execute("UPDATE items SET diet = ? WHERE item_id = ?", (diet, item_id))
+	connection.commit()
 	connection.close()
+
+def place_order(order_id: int, handled_by: str):
+	global ORDER_STATUS_PLACED
+	connection = get_connection()
+
+	connection.execute("""UPDATE orders SET status = ?, 
+						handled_by = ?,
+						last_modified = DATETIME('NOW', 'localtime')  
+						WHERE order_id = ?""", 
+					(ORDER_STATUS_PLACED, handled_by, order_id))
+
+	connection.commit()
+	connection.close()
+

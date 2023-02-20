@@ -28,7 +28,7 @@ def get_current_items(order_id: int) -> list[Item]:
 	return current_items
 
 
-@app.route("/item/<int:item_id>")
+@app.route("/item/<int:item_id>", methods=["GET", "POST"])
 def item(item_id: int):
 	
 	order_id = request.cookies.get('order_id')
@@ -36,8 +36,9 @@ def item(item_id: int):
 
 	if item is None:
 		error_code = 404
-		error_message = f"Item (id={item.item_id}) not found"
-		template = render_template("errors/404.html", error_code=error_code, error_message=error_message)
+		error_message = "Item not found"
+		template = render_template("errors/404.html", 	error_code=error_code, 
+														error_message=error_message)
 		return template
 
 	# render item template
@@ -45,9 +46,11 @@ def item(item_id: int):
 
 	if form.validate_on_submit():
 		diet = form.diet.data
-		db_manager.set_diet(item.item_id, diet)
-	
-	template = render_template("item.html", item=item)
+		db_manager.set_diet(item_id, diet)
+		return redirect(url_for("bar"))
+		
+	return render_template("item.html", form = form,
+										item=item)
 		
 
 
@@ -99,9 +102,14 @@ def bar():
 		resp.set_cookie('order_id', str(order_id))
 
 	
-	# debugging
 	if form.validate_on_submit():
-		print(f"RECIEVED POST")
+		handled_by = form.handled_by.data
+		db_manager.place_order(order_id, handled_by)
+		href = redirect(url_for("bar"))
+		resp = make_response(href)
+		resp.delete_cookie("order_id")
+		return resp
+
 
 	return resp
 
