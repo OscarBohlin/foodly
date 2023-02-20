@@ -1,4 +1,5 @@
 from flask import Flask, render_template, redirect, url_for, make_response, request
+from flask import flash
 from flask_bootstrap import Bootstrap
 from db_manager import Item, Product, Order
 
@@ -67,9 +68,24 @@ def remove_order():
 	return resp
 	
 
+@app.route("/remove_item/<int:item_id>")
+def remove_item(item_id: int):
+	order_id = request.cookies.get("order_id")
+	
+	if not db_manager.item_in_order(order_id, item_id):
+		code = 401
+		message = "You don't have access to remove this order"
+		return render_template("erros/404.html", error_code = code, error_message = message)
+
+	if order_id is not None:
+		db_manager.remove_item(item_id)
+
+	return redirect(url_for("bar"))
+
+
 @app.route("/add_to_cart/<int:product_id>", methods=["GET"])
 def add_to_cart(product_id: int):
-	order_id = request.cookies.get('order_id')
+	order_id = request.cookies.get("order_id")
 	
 	if order_id is not None:
 		db_manager.create_item(product_id, order_id)
@@ -82,6 +98,21 @@ def kitchen():
 	return "<h1>KITCHEN </h1>"
 
 
+@app.route("/order/<int:order_id>", methods=["GET"])
+def order(order_id: int):
+
+	order = db_manager.get_order(order_id)
+
+	if order is None:
+		code = 404
+		message = "Order not found" 
+		return render_template("errors/404.html",
+								error_code = code,
+								error_message = message)
+
+	return render_template("order.html", order = order)
+
+
 @app.route("/bar", methods=["GET", "POST"])
 def bar():
 
@@ -92,9 +123,10 @@ def bar():
 	current_items = get_current_items(order_id)
 	item_sum = sum_current_items(current_items)
 
-	template = render_template('bar.html', 	form = form, products = products, 
-											current_items = current_items,
-											item_sum = item_sum)
+	template = render_template('bar.html', 	form = form, 
+								products = products, 
+								current_items = current_items,
+								item_sum = item_sum)
 	resp = make_response(template)
 
 	if order_id is None or not db_manager.order_exists(order_id):
@@ -103,11 +135,17 @@ def bar():
 
 	
 	if form.validate_on_submit():
+		
+		# Zero items in cart
+		if item_sum == 0:
+			return redirect(url_for("bar"))
+		
 		handled_by = form.handled_by.data
 		db_manager.place_order(order_id, handled_by)
-		href = redirect(url_for("bar"))
+		href = redirect(url_for("order", order_id = order_id))
 		resp = make_response(href)
 		resp.delete_cookie("order_id")
+		
 		return resp
 
 
@@ -116,10 +154,15 @@ def bar():
 
 @app.route("/", methods=["GET"])
 def index():
-	return redirect(url_for("bar"))
+	
+	orders_ready, orders_begin_prepared = db_manager.get_active_orders()
+	return render_template("index.html", 
+							orders_begin_prepared = orders_begin_prepared,
+							orders_ready = orders_ready)
 
 
 if __name__ == "__main__":
+	db_manager.drop_all_tables()
 	db_manager.create_tables()
 	print("DB created")
 	db_manager.add_products()

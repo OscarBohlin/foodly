@@ -11,18 +11,21 @@
 	<div class="product-item">
 		<b>Rätt: {{ item.product.name }}</b><br>
 		Pris: {{ item.product.cost }}:-<br>
-		Specialkost: {{ item.diet }}
+		Specialkost: {% if item.diet == None %}{% else %}{{ item.diet }}{% endif %}
 	</div>
 	
 	<button type="button" class="btn-lg btn-warning trash-button" onclick="window.history.go(-1);">
-				<span class="glyphicon glyphicon-remove"></span>  Avbryt
-		</button>
+		<span class="glyphicon glyphicon-remove"></span>  Avbryt
+	</button>
+	
+	<button type="button" class="btn-lg btn-danger trash-button" onclick="window.location.href='/remove_item/{{item.item_id}}';">
+		<span class="glyphicon glyphicon-trash"></span>  Ta bort produkt
+	</button>
+
 
 	{{ wtf.quick_form(form) }}
 
 </div>
-
-
 
 
 {% endblock %}

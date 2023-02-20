@@ -8,14 +8,6 @@ ORDER_STATUS_PLACED = 1
 ORDER_STATUS_COOKING = 2
 ORDER_STATUS_DONE = 3
 
-class Order():
-
-	def __init__(self, order_id: int, time_created: datetime, handled_by: str, status: int) -> None:			
-		self.order_id = order_id
-		self.time_created = time_created
-		self.handled_by = handled_by
-		self.status = status
-
 class Product():
 	
 	def __init__(self, product_id: int, name: str, cost: float, category: str) -> None:
@@ -32,13 +24,34 @@ class Item():
 		self.order_id = order_id
 		self.diet = diet
 
+class ItemToDisplay():
+	def __init__(self, name: str, cost: float, category: str, diet: str):
+		self.name = name
+		self.cost = cost
+		self.category = category
+		self.diet = diet
+
+class Order():
+
+	def __init__(self, order_id: int, last_modified: datetime, handled_by: str, 
+				status: int, items: list[ItemToDisplay], placed_date: datetime) -> None:	
+
+		self.order_id = order_id
+		self.last_modified = last_modified
+		self.placed_date = placed_date
+		self.handled_by = handled_by
+		self.status = status
+		self.items = items
+
+
 
 def create_tables():
-	drop_all_tables() # FOR SIENCE
+	# drop_all_tables() # FOR SIENCE
 
 	connection = get_connection()
 	connection.execute("""CREATE TABLE IF NOT EXISTS orders (
 						order_id INTEGER PRIMARY KEY AUTOINCREMENT,
+						placed_date TIMESTAMP,
 						last_modified TIMESTAMP DEFAULT (datetime('now', 'localtime')),
 						handled_by TEXT DEFAULT NULL, 
 						status INTEGER DEFAULT 0)  """)
@@ -216,10 +229,88 @@ def place_order(order_id: int, handled_by: str):
 
 	connection.execute("""UPDATE orders SET status = ?, 
 						handled_by = ?,
-						last_modified = DATETIME('NOW', 'localtime')  
+						last_modified = DATETIME('NOW', 'localtime'),
+						placed_date = DATETIME('NOW', 'localtime')
 						WHERE order_id = ?""", 
 					(ORDER_STATUS_PLACED, handled_by, order_id))
 
 	connection.commit()
 	connection.close()
 
+def parse_ItemToDisplay(item: tuple) -> Item:
+	
+	name = item[3]
+	cost = item[4]
+	category = item[5]
+	diet = item[6]
+
+	return ItemToDisplay(name, cost, category, diet)
+	
+
+def get_order(order_id: int) -> Order:
+	global ORDER_STATUS_PLACED
+
+	connection = get_connection()
+	# "order_id, last_modified, product_name, product_cost, product_category, item_diet, handled_by"
+
+	query = connection.execute("""SELECT o.order_id, o.last_modified, o.handled_by, 
+										p.name, p.cost, p.category, i.diet, 
+										o.status, o.placed_date 
+						FROM orders AS o
+						INNER JOIN items AS i ON i.order_id = o.order_id
+						INNER JOIN products AS p ON p.product_id = i.product_id
+						WHERE o.order_id = ? AND o.status = ?""", (order_id, ORDER_STATUS_PLACED)).fetchall()
+
+	connection.commit()
+	connection.close()
+
+	if len(query) is 0:
+		return None
+
+	items = [parse_ItemToDisplay(item) for item in query]
+	last_modified = query[0][1]
+	handled_by 	= query[0][2]
+	status 		= query[0][7]
+	placed_date = query[0][8]
+
+	return Order(order_id, last_modified, handled_by, status, items, placed_date)
+
+
+def get_active_orders():
+	connection = get_connection()
+
+	active_statuses = (ORDER_STATUS_COOKING, ORDER_STATUS_PLACED)
+	done_orders_tuple = connection.execute("""SELECT order_id FROM orders WHERE status = ?
+										ORDER BY order_id ASC""", (ORDER_STATUS_DONE,)).fetchall()
+	
+	orders_prepared_tuple = connection.execute("""SELECT order_id FROM orders WHERE status IN (?, ?)
+										ORDER BY order_id ASC""", active_statuses).fetchall()
+
+	connection.commit()
+	connection.close()
+
+	done_orders = [order_id[0] for order_id in done_orders_tuple]
+	orders_prepared = [order_id[0] for order_id in orders_prepared_tuple]
+	return done_orders, orders_prepared
+
+
+def item_in_order(order_id: int, item_id: int) -> bool:
+
+	connection = get_connection()
+
+	item = connection.execute("SELECT * FROM items WHERE item_id = ? AND order_id = ?",
+						(item_id, order_id)).fetchone()
+
+	connection.close()
+	
+	if item is None:
+		return False
+	
+	return True
+
+def remove_item(item_id):
+	connection = get_connection()
+	connection.execute("DELETE FROM items WHERE item_id = ?", (item_id,))
+	connection.commit()
+	connection.close()
+	return
