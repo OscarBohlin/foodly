@@ -24,8 +24,11 @@
 		
 		<div class="col-sm border-start">
 		<h1 style="text-align: center;">Klar</h1>
-			{% for order_id in orders_ready %}
+			<!-- {% for order_id in orders_ready %}
 			<div class="order_id align-items-center" style="background-color: green;">{{ order_id }}</div>
+			{% endfor %} -->
+			{% for order_id in orders_ready %}
+			<button type="button" class="btn btn-lg btn-secondary order_id" disabled style="background-color: green;">{{ order_id }}</button>
 			{% endfor %}
 			
 		</div>

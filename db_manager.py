@@ -314,3 +314,40 @@ def remove_item(item_id):
 	connection.commit()
 	connection.close()
 	return
+
+def get_placed_orders():
+	connection = get_connection()
+
+	placed_orders_tuple = connection.execute("""SELECT order_id FROM orders WHERE status = ?
+										ORDER BY order_id ASC""", (ORDER_STATUS_PLACED,)).fetchall()
+
+	connection.commit()
+	connection.close()
+
+	placed_orders = [order_id[0] for order_id in placed_orders_tuple]
+	return placed_orders
+
+
+def get_cooking_orders():
+	connection = get_connection()
+
+	cooking_orders_tuple = connection.execute("""SELECT order_id FROM orders WHERE status = ?
+										ORDER BY order_id ASC""", (ORDER_STATUS_COOKING,)).fetchall()
+
+	connection.commit()
+	connection.close()
+
+	cooking_orders = [order_id[0] for order_id in cooking_orders_tuple]
+	return cooking_orders
+
+def get_done_orders():
+	connection = get_connection()
+
+	done_orders_tuple = connection.execute("""SELECT order_id FROM orders WHERE status = ?
+										ORDER BY order_id ASC""", (ORDER_STATUS_DONE,)).fetchall()
+
+	connection.commit()
+	connection.close()
+
+	done_orders = [order_id[0] for order_id in done_orders_tuple]
+	return done_orders

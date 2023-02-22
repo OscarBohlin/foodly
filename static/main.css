@@ -157,7 +157,16 @@ body {
 		color: whitesmoke;
 	}
 	
+	.kitchen_btn {
+		width: 150px;
+		height: 75px;
+		border-radius: 5px;
 
+		font-size: 30px;
+		cursor: default;
+		margin: 10px;
+		color: black;
+	}
 
 
 	@media (max-width : 400px) {

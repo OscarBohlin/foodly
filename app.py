@@ -95,7 +95,16 @@ def add_to_cart(product_id: int):
 
 @app.route("/kitchen", methods=["GET", "POST"])
 def kitchen():
-	return "<h1>KITCHEN </h1>"
+	orders_ready, orders_begin_prepared = db_manager.get_active_orders()
+	orders_placed = db_manager.get_placed_orders()
+	orders_cooking = db_manager.get_cooking_orders()
+	orders_done = db_manager.get_done_orders()
+
+	return render_template("kitchen.html", orders_begin_prepared = orders_begin_prepared,
+							orders_ready = orders_ready,
+							orders_placed=orders_placed,
+							orders_cooking=orders_cooking,
+							orders_done=orders_done)
 
 
 @app.route("/order/<int:order_id>", methods=["GET"])
