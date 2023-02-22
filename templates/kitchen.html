@@ -11,21 +11,21 @@
             <h1 style="text-align: center;">Väntande ordrar</h1>
     
                 {% for order_id in orders_placed %}
-                <button type="button" onclick="window.location.href='/';" class="btn btn-lg btn-secondary order_id" style="background-color: blue;">{{ order_id }}</button>
+                <button type="button" onclick="window.location.href='/status/{{ order_id }}';" class="btn btn-lg btn-secondary order_id" style="background-color: rgb(99, 99, 252);">{{ order_id }}</button>
                 {% endfor %}
         </div>
         <div class="col-sm border-start">
             <h1 style="text-align: center;">Tillagas</h1>
     
                 {% for order_id in orders_cooking %}
-                <button type="button" onclick="window.location.href='/';" class="btn btn-lg btn-secondary kitchen_btn" style="background-color: yellow;">{{ order_id }}</button>
+                <button type="button" onclick="window.location.href='/status/{{ order_id }}';" class="btn btn-lg btn-secondary kitchen_btn" style="background-color: rgb(239, 239, 111);">{{ order_id }}</button>
                 {% endfor %}
                 
         </div>
         <div class="col-sm border-start">
             <h1 style="text-align: center;">Klara</h1>
                 {% for order_id in orders_done %}
-                <button type="button" onclick="window.location.href='/';" class="btn btn-lg btn-secondary kitchen_btn" style="background-color: green;">{{ order_id }}</button>
+                <button type="button" onclick="window.location.href='/status/{{ order_id }}';" class="btn btn-lg btn-secondary kitchen_btn" style="background-color: lightgreen;">{{ order_id }}</button>
                 {% endfor %}
         </div>
     </div>

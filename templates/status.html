@@ -1,0 +1,59 @@
+{% extends 'bootstrap/base.html' %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% include 'layout.html' %}
+
+
+{% block content %}
+<div class="container">
+
+	<div class="order">
+	<h1> Ordernummer: {{ order.order_id }}</h1>
+	<h3>Lagd: {{ order.placed_date }} av {{ order.handled_by }}</h3>
+	
+
+		<div class="cart col">
+			<div class="table-responsive">
+			<table class="table table-sm borderless caption-top">
+			<caption>Order:</caption>
+				<thead>
+					<tr>
+						<th scope="col">Vara</th>
+						<th scope="col">Pris</th>
+						<th scope="col">Specialkost</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for ItemToDisplay in order.items %}	
+						<tr >
+							<td>{{ ItemToDisplay.name }}</td>
+							<td>{{ ItemToDisplay.cost }}</td>
+							
+							{% if ItemToDisplay.diet != None %}
+							<td>{{ ItemToDisplay.diet }}</td>
+							{% else %}
+							<td></td>
+							{% endif %}						
+						</tr>
+						{% endfor %}
+				</tbody>
+			</table>
+			<hr style="width: 100%;">
+		</div>
+
+		<div>
+		<button type="button" class="btn-lg btn-info trash-button" onclick="window.location.href='/kitchen';">
+			<span class="glyphicon glyphicon-ok"></span>  Tillbaka
+		</button>
+		<button type="button" class="btn-lg btn-warning trash-button" onclick="window.location.href='/statuscooking/{{ order.order_id }}';">
+			<span class="glyphicon glyphicon-wrench"></span>  Tillaga
+		</button>
+        <button type="button" class="btn-lg btn-success trash-button" onclick="window.location.href='/statusdone/{{ order.order_id }}';">
+			<span class="glyphicon glyphicon-usd"></span>  Färdig
+		</button>
+		</div>
+
+
+	</div>
+</div>
+{% endblock %}

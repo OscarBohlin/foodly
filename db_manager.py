@@ -351,3 +351,39 @@ def get_done_orders():
 
 	done_orders = [order_id[0] for order_id in done_orders_tuple]
 	return done_orders
+
+def update_status(order_id: int, status: int):
+	connection = get_connection()
+
+	connection.execute("""UPDATE orders SET status = ?
+						WHERE order_id = ?""", (status, order_id))
+
+	connection.commit()
+	connection.close()
+
+def get_any_order(order_id: int) -> Order:
+
+	connection = get_connection()
+	# "order_id, last_modified, product_name, product_cost, product_category, item_diet, handled_by"
+
+	query = connection.execute("""SELECT o.order_id, o.last_modified, o.handled_by, 
+										p.name, p.cost, p.category, i.diet, 
+										o.status, o.placed_date 
+						FROM orders AS o
+						INNER JOIN items AS i ON i.order_id = o.order_id
+						INNER JOIN products AS p ON p.product_id = i.product_id
+						WHERE o.order_id = ?""", (order_id,)).fetchall()
+
+	connection.commit()
+	connection.close()
+
+	if len(query) is 0:
+		return None
+
+	items = [parse_ItemToDisplay(item) for item in query]
+	last_modified = query[0][1]
+	handled_by 	= query[0][2]
+	status 		= query[0][7]
+	placed_date = query[0][8]
+
+	return Order(order_id, last_modified, handled_by, status, items, placed_date)

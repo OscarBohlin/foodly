@@ -93,9 +93,13 @@ def add_to_cart(product_id: int):
 	return redirect(url_for("bar"))
 
 
+
+
+
 @app.route("/kitchen", methods=["GET", "POST"])
 def kitchen():
-	orders_ready, orders_begin_prepared = db_manager.get_active_orders()
+	orders_ready, orders_begin_prepared = db_manager.get_active_orders() # tror inte att vi kommer att behöva denna
+
 	orders_placed = db_manager.get_placed_orders()
 	orders_cooking = db_manager.get_cooking_orders()
 	orders_done = db_manager.get_done_orders()
@@ -105,6 +109,41 @@ def kitchen():
 							orders_placed=orders_placed,
 							orders_cooking=orders_cooking,
 							orders_done=orders_done)
+
+@app.route("/status/<int:order_id>", methods=["GET","POST"])
+def status(order_id: int):
+	order = db_manager.get_any_order(order_id)
+
+	print(f"MIN FUCKING ORDER: {order_id}")
+	if order is None:
+		code = 404
+		message = "Order not found" 
+		return render_template("errors/404.html",
+								error_code = code,
+								error_message = message)
+
+	return render_template("status.html", order = order)
+
+
+@app.route("/statuscooking/<int:order_id>", methods=["GET"])
+def statuscooking(order_id: int):
+	order_status_cooking = 2
+	db_manager.update_status(order_id, order_status_cooking)
+	return redirect(url_for("kitchen"))
+
+
+@app.route("/statusdone/<int:order_id>", methods=["GET"])
+def statusdone(order_id: int):
+	order_status_done = 3
+	db_manager.update_status(order_id, order_status_done)
+	return redirect(url_for("kitchen"))
+
+
+
+
+
+
+
 
 
 @app.route("/order/<int:order_id>", methods=["GET"])
