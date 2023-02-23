@@ -4,7 +4,7 @@ Foodly is a easy to use order processing system for restaurants.
 
 This is a project for the course "Introduction to database management" (5DV202) at Umeå University, spring 2023.
 
-A quick presentation of Foodly can be viewed in [Commercial](./commercial.mp4) 
+A quick presentation of Foodly can be viewed in the [commercial](./commercial.mp4). 
 
 ## Authors
 
@@ -21,7 +21,7 @@ A Python virtual environment is recommended, but not required.
 ```bash
 # Create and activate a virtual envoriment
 python3 -m venv venv
-source venv/bin/activate
+source venv/bin/activate 
 
 # Install required pip packages
 pip3 install -r requirements.txt
@@ -67,6 +67,6 @@ The kitchen can see which orders are on queue, being cooked and which are ready 
 
 ## The database
 
-The databse consists of three tables seen below
+The database consists of three tables seen below
 
-![Database ER diagram](images/bar_page.png)
+![Database ER diagram](images/ER_diagram.png)
