@@ -9,7 +9,7 @@ A quick presentation of Foodly can be viewed in the [commercial](./commercial.mp
 ## Authors
 
 - Oscar Bohlin, c20obn@cs.umu.se
-- Anton Dacklin Gaied, ens19ann@cs.umu.se
+- [Anton Dacklin Gaied](https://github.com/ubbe92), ens19ann@cs.umu.se
 
 ## Running Foodly
 
