@@ -114,7 +114,6 @@ def kitchen():
 def status(order_id: int):
 	order = db_manager.get_any_order(order_id)
 
-	print(f"MIN FUCKING ORDER: {order_id}")
 	if order is None:
 		code = 404
 		message = "Order not found" 
@@ -127,14 +126,14 @@ def status(order_id: int):
 
 @app.route("/statuscooking/<int:order_id>", methods=["GET"])
 def statuscooking(order_id: int):
-	order_status_cooking = 2
+	order_status_cooking = db_manager.ORDER_STATUS_COOKING
 	db_manager.update_status(order_id, order_status_cooking)
 	return redirect(url_for("kitchen"))
 
 
 @app.route("/statusdone/<int:order_id>", methods=["GET"])
 def statusdone(order_id: int):
-	order_status_done = 3
+	order_status_done = db_manager.ORDER_STATUS_DONE
 	db_manager.update_status(order_id, order_status_done)
 	return redirect(url_for("kitchen"))
 
