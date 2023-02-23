@@ -4,7 +4,7 @@ Foodly is a easy to use order processing system for restaurants.
 
 This is a project for the course "Introduction to database management" (5DV202) at Umeå University, spring 2023.
 
-A quick presentation of Foodly can be viewed in [Commercial](./foodly.py) 
+A quick presentation of Foodly can be viewed in [Commercial](./commercial.mp4) 
 
 ## Authors
 
