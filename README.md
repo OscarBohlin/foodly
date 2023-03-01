@@ -26,6 +26,9 @@ source venv/bin/activate
 # Install required pip packages
 pip3 install -r requirements.txt
 
+# Set SECRET_KEY for Cookie authentication
+echo "SECRET_KEY =" '"'$(python3 -c "import secrets; print(secrets.token_urlsafe(40))")'"' > secret.py
+
 # Run Foodly
 python3 foodly.py
 ```

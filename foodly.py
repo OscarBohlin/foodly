@@ -8,7 +8,7 @@ import db_manager
 import forms
 
 app = Flask(__name__)
-app.config["SECRET_KEY"] = str(os.urandom(20).hex())
+app.config.from_pyfile("secret.py")
 Bootstrap(app)
 
 
