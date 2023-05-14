@@ -232,6 +232,12 @@ if __name__ == "__main__":
         help="Port to listen on")
 
     parser.add_argument(
+        "-k", "--generate-key",
+        action="store_true",
+        help="Generate a new secure token"
+    )
+
+    parser.add_argument(
             "--production", 
             action="store_true", 
             help="Use production environment")
@@ -240,13 +246,14 @@ if __name__ == "__main__":
     args = parser.parse_args()
     port = args.port
 
+   
     if args.production:
         start_production_server()
     else:
-        start_development_server()
+        start_development_server(port)
 
     db_manager.drop_all_tables()
     db_manager.create_tables()
     db_manager.add_products()
 
-    app.run(debug=True)
+    app.run(debug=True, port=port)
