@@ -7,10 +7,14 @@ import argparse
 import os
 import db_manager
 import forms
+import secrets
 
 app = Flask(__name__)
-app.config.from_pyfile("secret.py")
-Bootstrap(app)
+
+
+def configure_flask():       
+    app.config.from_pyfile("secret.py")
+    Bootstrap(app)
 
 
 def sum_current_items(items: list[Item]) -> int:
@@ -217,6 +221,17 @@ def start_production_server(port: int):
     pass
     # TODO
 
+def generate_secret_key() -> str:
+    key = secrets.token_urlsafe(40)
+    return key    
+
+def store_secret_key(key: str):
+    file = open("secret.py", "wt")
+    payload = f"SECRET_KEY = \"{key}\""
+    file.write(payload)
+    file.close()
+
+
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(
@@ -246,7 +261,12 @@ if __name__ == "__main__":
     args = parser.parse_args()
     port = args.port
 
-   
+    if args.generate_key:
+        print("Generating new key...")
+        key = generate_secret_key()
+        store_secret_key(key)
+        print("Done!")
+        exit()
     if args.production:
         start_production_server()
     else:
@@ -255,5 +275,7 @@ if __name__ == "__main__":
     db_manager.drop_all_tables()
     db_manager.create_tables()
     db_manager.add_products()
+
+    configure_flask()
 
     app.run(debug=True, port=port)
