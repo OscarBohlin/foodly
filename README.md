@@ -21,19 +21,19 @@ A Python virtual environment is recommended, but not required.
 ```bash
 # Create and activate a virtual envoriment
 python3 -m venv venv
-source venv/bin/activate 
+source ./venv/bin/activate 
 
 # Install required pip packages
 pip3 install -r requirements.txt
 
 # Set SECRET_KEY for Cookie authentication
-python3 foodly.py --generate-key
+python3 src/foodly.py --generate-key
 
 # Run Foodly
-python3 foodly.py
+python3 src/foodly.py
 ```
 
-Foodly can now be viewed in a browser: `http://127.0.0.1:5000`.
+Foodly can now be viewed in a browser: `http:localhost:5000`.
 
 ## Documentation
 
