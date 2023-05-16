@@ -266,16 +266,18 @@ if __name__ == "__main__":
         key = generate_secret_key()
         store_secret_key(key)
         print("Done!")
-        exit()
-    if args.production:
-        start_production_server()
-    else:
-        start_development_server(port)
+        exit(0)
+        
 
-    db_manager.drop_all_tables()
+    configure_flask()
+    # db_manager.drop_all_tables()
     db_manager.create_tables()
     db_manager.add_products()
 
-    configure_flask()
+    if args.production:
+        start_production_server(port)
+    else:
+        start_development_server(port)
 
-    app.run(debug=True, port=port)
+
+
