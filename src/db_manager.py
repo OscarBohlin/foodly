@@ -264,7 +264,7 @@ def get_order(order_id: int) -> Order:
 	connection.commit()
 	connection.close()
 
-	if len(query) is 0:
+	if len(query) == 0:
 		return None
 
 	items = [parse_ItemToDisplay(item) for item in query]
@@ -377,7 +377,7 @@ def get_any_order(order_id: int) -> Order:
 	connection.commit()
 	connection.close()
 
-	if len(query) is 0:
+	if len(query) == 0:
 		return None
 
 	items = [parse_ItemToDisplay(item) for item in query]
